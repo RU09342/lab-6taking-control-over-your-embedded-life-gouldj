@@ -29,7 +29,7 @@ void adc_init(void) {
 	ADC10CTL0 &= ~ENC;												//ADC10 enable conversion,ADC10 disabled
 	ADC10CTL0 = SREF_1 + REFON + ADC10SHT_3 + ADC10ON + ADC10IE;	//1.5v reference voltage, 64*ADC10 clocks, ADC10 on, interrupt enable
 	ADC10CTL1 = INCH_6 + ADC10SSEL_3 + ADC10DIV_3;					//chosen internal temperature sensor,SMCLK,clock divider 3
-	ADC10AE0 = BIT6;												//Anlog enable for internal temperature
+	ADC10AE0 = BIT6;												//Anlog enable for internal temperature PA.6
 }
 int main(void) {
 	WDTCTL = WDTPW | WDTHOLD;		// Stop watchdog timer
@@ -39,10 +39,24 @@ int main(void) {
 	//required ADC adjustment
 	P1SEL = 0x00;
 	P1OUT = 0x00;
-	P1DIR = 0xFF;
+	P1DIR = 0xFF;		//All bits as out
 	P2SEL = 0x00;
-	P2DIR = 0xFF;
+	P2DIR = 0xFF;		//All bits as out
 	
+	// UART Stuff
+	DCOCTL = 0;                               // Select lowest DCOx and MODx settings
+	BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
+	DCOCTL = CALDCO_1MHZ;
+	P1SEL = BIT1 + BIT2;                     // P1.1 = RXD, P1.2=TXD
+	P1SEL2 = BIT1 + BIT2;                    // P1.1 = RXD, P1.2=TXD			May be repeat
+	UCA0CTL1 |= UCSSEL_2;                     // SMCLK
+	UCA0BR0 = 104;                            // 1MHz 9600
+	UCA0BR1 = 0;                              // 1MHz 9600
+	UCA0MCTL = UCBRS0;                        // Modulation UCBRSx = 1
+	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
+	IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
+	//UART End
+
 	//required pwm adjustment
 	P2SEL |= BIT1;				//Pwm at P2.1
 	TA1CCTL1 = OUTMOD_7;		//PWM output mode: 7 - PWM reset/set
@@ -55,7 +69,6 @@ int main(void) {
 	TACTL = TASSEL_2 + MC_1 + TAIE;  //1mikro*50000=50 ms(interrupt run once at 50ms)
 									 //call ADC and Lcd adjustments
 	adc_init();
-	lcd_init();
 
 	for (;;) {
 		_BIS_SR(CPUOFF + GIE);//low power mode
@@ -78,71 +91,42 @@ __interrupt void bekle(void) {
 __interrupt void adc_kesmesi(void) {
 
 	x = 1;
-	lcd_goto(1, 1);
-	lcd_puts("temp=");
-	//for write temperature value on lcd
 	for (i = 0; i <= 1; i++) {
 		dizi[i] = ((temp / x) % 10) + 48;
 		x = x * 10;
 	}
-	for (i = 0; i <= 1; i++) {
-		lcd_putch(dizi[1 - i]);
-	}
 	//adjust and write motor speed depends on temperature
 	if (temp >= 0 && temp <= 20) {			//if temp between 0 and 20 adjust fanspeed to 1/7th of normal value
-
-		lcd_puts("int = 0 - 20");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=1/7");
 		TA1CCR1 = 1;
 		__delay_cycles(65000);
 	}
 
 	else if (temp >= 21 && temp <= 25) {
-		lcd_puts("int=21-25");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=2/7");
 		TA1CCR1 = 2;
 		__delay_cycles(65000);
 	}
 
 	else if (temp >= 26 && temp <= 30) {
-		lcd_puts("int=26-30");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=3/7");
 		TA1CCR1 = 3;
-
 		__delay_cycles(65000);
 	}
 
 	else if (temp >= 31 && temp <= 35) {
-		lcd_puts("int=31-35");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=5/7");
 		TA1CCR1 = 5;
 		__delay_cycles(65000);
 	}
 
 	else if (temp >= 36 && temp <= 40) {
-		lcd_puts("int=36-40");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=5/7");
 		TA1CCR1 = 5;
 		__delay_cycles(65000);
 	}
 
 	else if (temp >= 41 && temp <= 45) {
-		lcd_puts("int=41-45");
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=6/7");
 		TA1CCR1 = 6;
 		__delay_cycles(65000);
 	}
 
 	else {
-		lcd_puts("very much");			//if above 45C put at full power
-		lcd_goto(2, 1);
-		lcd_puts("fan speed=7/7");
 		TA1CCR1 = 7;
 		__delay_cycles(65000);
 	}
