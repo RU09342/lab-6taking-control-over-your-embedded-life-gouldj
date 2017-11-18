@@ -10,8 +10,14 @@
 // Hacettepe University
 // December 2010
 //******************************************************************************
+/*
+* Joshua Gould
+* MSP430G2553 - Visualizing Data LCD
+* Created: 11 - 07 - 17
+* Updated 11 - 22 -2017
+*/
 #include <msp430.h>
-//#include "lcd_4bit.h"
+#include "lcd_4bit.h"
 //required global variables
 int adc_result = 0;
 int temp = 0;
@@ -20,27 +26,46 @@ int x = 1;
 int i;
 //for read analog value
 void adc_init(void) {
-	ADC10CTL0 &= ~ENC;//ADC10 enable conversion,ADC10 disabled
-	ADC10CTL0 = SREF_1 + REFON + ADC10SHT_3 + ADC10ON + ADC10IE;//1.5v reference voltage,64*ADC10 clocks, ADC10 on,interrupt enable
-	ADC10CTL1 = INCH_6 + ADC10SSEL_3 + ADC10DIV_3;//chosen internal temperature sensor,SMCLK,clock divider 3
-	ADC10AE0 = BIT6;//Anlog enable for internal temperature
+	ADC10CTL0 &= ~ENC;												//ADC10 enable conversion,ADC10 disabled
+	ADC10CTL0 = SREF_1 + REFON + ADC10SHT_3 + ADC10ON + ADC10IE;	//1.5v reference voltage, 64*ADC10 clocks, ADC10 on, interrupt enable
+	ADC10CTL1 = INCH_6 + ADC10SSEL_3 + ADC10DIV_3;					//chosen internal temperature sensor,SMCLK,clock divider 3
+	ADC10AE0 = BIT6;												//Anlog enable for internal temperature PA.6
+}
+void initializeUART(void) 		// from Lab 1 example code
+{
+	P3SEL |= BIT3;      	// UART TX
+	P3SEL |= BIT4;      	// UART RX
+	UCA0CTL1 |= UCSWRST;   	// Resets state machine
+	UCA0CTL1 |= UCSSEL_2;  	// SMCLK
+	UCA0BR0 = 6;         	// 9600 Baud Rate
+	UCA0BR1 = 0;         	// 9600 Baud Rate
+	UCA0MCTL |= UCBRS_0;   	// Modulation
+	UCA0MCTL |= UCBRF_13;  	// Modulation
+	UCA0MCTL |= UCOS16;    	// Modulation
+	UCA0CTL1 &= ~UCSWRST;   // Initializes the state machine
+	UCA0IE |= UCRXIE;    	// Enables USCI_A0 RX Interrupt
 }
 int main(void) {
-	WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
+	WDTCTL = WDTPW | WDTHOLD;		// Stop watchdog timer
 	DCOCTL = CALDCO_1MHZ;
 	BCSCTL1 = CALBC1_1MHZ;
+	
+	//UART INIT
+	initializeUART();
+
 	//required ADC adjustment
 	P1SEL = 0x00;
 	P1OUT = 0x00;
-	P1DIR = 0xFF;
+	P1DIR = 0xFF;		//All bits as out
 	P2SEL = 0x00;
-	P2DIR = 0xFF;
+	P2DIR = 0xFF;		//All bits as out
+
 	//required pwm adjustment
-	P2SEL |= BIT1;//Pwm at P2.1
-	TA1CCTL1 = OUTMOD_7;//PWM output mode: 7 - PWM reset/set
-	TA1CCR0 = 7;//for max voltage.max voltage diveded seven part
-	TA1CCR1 = 0;//for min voltage
-	TA1CTL = TASSEL_2 + MC_1;//Timer A clock source select: 2 - SMCLK,up mode
+	P2SEL |= BIT1;				//Pwm at P2.1
+	TA1CCTL1 = OUTMOD_7;		//PWM output mode: 7 - PWM reset/set
+	TA1CCR0 = 7;				//for max voltage.max voltage diveded seven part
+	TA1CCR1 = 0;				//for min voltage
+	TA1CTL = TASSEL_2 + MC_1;				//Timer A clock source select: 2 - SMCLK,up mode
 							 //required timer adjustment
 	CCTL0 = CCIE;
 	CCR0 = 50000;//timer count as 50000
@@ -52,6 +77,29 @@ int main(void) {
 	for (;;) {
 		_BIS_SR(CPUOFF + GIE);//low power mode
 	}
+}
+
+//  Echo back RXed character, confirm TX buffer is ready first
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector=USCIAB0RX_VECTOR
+__interrupt void USCI0RX_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__((interrupt(USCIAB0RX_VECTOR))) USCI0RX_ISR(void)
+#else
+#error Compiler not supported!
+#endif
+{
+	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
+
+											  //set input start value S = 83
+	if (UCA0TXBUF = 83) {
+		UCA0TXBUF = ADC10MEM; //adds ADC value and skips clockcycle apparently
+		P1OUT ^= 0x01;
+	}
+	else {
+		UCA0TXBUF = 0;       //else code to print stop perhaps
+	}
+
 }
 
 #pragma vector = TIMER0_A0_VECTOR
@@ -81,9 +129,9 @@ __interrupt void adc_kesmesi(void) {
 		lcd_putch(dizi[1 - i]);
 	}
 	//adjust and write motor speed depends on temperature
-	if (temp >= 0 && temp <= 20) {
+	if (temp >= 0 && temp <= 20) {			//if temp between 0 and 20 adjust fanspeed to 1/7th of normal value
 
-		lcd_puts("int=0-20");
+		lcd_puts("int = 0 - 20");
 		lcd_goto(2, 1);
 		lcd_puts("fan speed=1/7");
 		TA1CCR1 = 1;
@@ -132,7 +180,7 @@ __interrupt void adc_kesmesi(void) {
 	}
 
 	else {
-		lcd_puts("very much");
+		lcd_puts("very much");			//if above 45C put at full power
 		lcd_goto(2, 1);
 		lcd_puts("fan speed=7/7");
 		TA1CCR1 = 7;

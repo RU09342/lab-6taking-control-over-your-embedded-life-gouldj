@@ -83,7 +83,7 @@ void tempSensor()
 
             // Calculate Temperature in degree C and F
             signed short temp = (ADC12MEM0 - CALADC_12V_30C);
-            degC = ((long)temp * 10 * (85-30) * 10)/((CALADC_12V_85C-CALADC_12V_30C)*10) + 300;
+            degC = ((long)temp * 10 * (85-30) * 10) / ((CALADC_12V_85C-CALADC_12V_30C )*10) + 300;
             degF = (degC) * 9 / 5 + 320;
 
             // Update temperature on LCD
