@@ -7,7 +7,7 @@ Since you already have the code to perform PWM, then really, the software side o
 ## R2R DAC
 *What if your system is noise sensitive or possibly needs more precision than just a PWM signal, you might need to look into using an actual Digital-to-Analog converter. One of the simplest DAC architectures is a R2R ladder. Using the MSP430F5529, you need to generate an 8-bit R2R ladder circuit that can produce "255" voltages between 0V and Vcc. Now how are you actually going to test this, cause I am sure you aren't going to measure 255 voltages on the DMM. You should set up your F5529 so it generates a staircase using a binary counter and then record on the oscilloscope the resulting waveform.*
 
-![Alt text](/lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/setup.png "Setup")		
+![Alt text](/lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/setup.jpg "Setup")		
 
 ## Loading Effects
 Obviously you are going to be making this type of circuitry to drive something. This introduces the idea of loading effect, wherein your circuit will perform differently based on what is going to be attached to it. For each of these implementations, try placing a variety of resistors from 100 ohms up to see what happens to your output signal and comment on what is happening.
