@@ -175,39 +175,39 @@ __interrupt void ADC10_ISR(void)
 												  //adjust and write motor speed depends on tempCerature
 	if (tempC >= 0 && tempC <= 20) {			//if tempC between 0 and 20 adjust fanspeed to 1/7th of normal value
 
-		TA1CCR0 = 1;
+		TA1CCR1 = 1;
 		__delay_cycles(65000);
 	}
 
 	else if (tempC >= 21 && tempC <= 25) {
-		TA1CCR0 = 2;
+		TA1CCR1 = 2;
 		__delay_cycles(65000);
 	}
 
 	else if (tempC >= 26 && tempC <= 30) {
-		TA1CCR0 = 3;
+		TA1CCR1 = 3;
 
 		__delay_cycles(65000);
 	}
 
 	else if (tempC >= 31 && tempC <= 35) {
-		TA1CCR0 = 5;
+		TA1CCR1 = 5;
 		__delay_cycles(65000);
 	}
 
 	else if (tempC >= 36 && tempC <= 40) {
-		TA1CCR0 = 5;
+		TA1CCR1 = 5;
 		__delay_cycles(65000);
 	}
 
 	else if (tempC >= 41 && tempC <= 45) {
-		TA1CCR0 = 6;
+		TA1CCR1 = 6;
 		__delay_cycles(65000);
 
 	}
 
 	else {
-		TA1CCR0 = 7;
+		TA1CCR1 = 7;
 		__delay_cycles(65000);
 	}
 
