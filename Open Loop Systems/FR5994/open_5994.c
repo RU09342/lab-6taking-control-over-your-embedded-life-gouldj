@@ -1,11 +1,33 @@
-//Jessica Wozniak & Ryan Hare
-//Lab 5 Sensors: ADC10 MSP430G2553- Temperature Sensor
-//Created: 11/7/17
-//Last updated: 11/19/17
+//******************************************************************************
+//
+//                 MSP430FR5994
+//              -------------------
+//         /|\  |          VCC|- 3.3V
+//          |   |             |
+//          --  |GND      P1.5|--< adc temp
+//              |         P1.4|--> TX
+//              |			  |
+//              |             |
+//				|		  P1.0|--> LED
+//              -------------------
+//  adc_value (P1.7) to LM35
+//
+//  Filename : msp430g2553-ADC10.c
+//
+//  Created on : October 22, 2017
+//  Updated on : November 15, 2017
+//  Author : Joshua Gould
+//
+//******************************************************************************
 
+
+//Joshua Gould
+//
+//Reference Jessica Wozniak & Russell Trafford
+//
 #include <msp430.h>
 
-#define ADC12 BIT1
+#define ADC12 BIT5
 #define LED1 BIT0
 #define RXD BIT4
 #define TXD BIT3
@@ -18,10 +40,10 @@ void UARTInit(void);
 void GPIOInit(void);
 void PinInit(void);
 
-unsigned int in = 0;
-float tempC = 0;
-float tempF = 0;
-float voltage = 0;
+unsigned volatile int in = 0;
+volatile float tempC = 0;
+volatile float tempF = 0;
+volatile float voltage = 0;
 
 int main(void)
 {
@@ -36,7 +58,7 @@ int main(void)
 
 
 	while (REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
-	REFCTL0 |= REFVSEL_0 + REFON;           // Enable internal 2.5V reference
+	REFCTL0 |= REFVSEL_0 + REFON;           // Enable internal 1.2 reference
 
 	ADC12Init();                  //ADC10 Function call
 
@@ -45,6 +67,7 @@ int main(void)
 
 	while (1)
 	{
+
 		__bis_SR_register(LPM0 + GIE); // Enter LPM0, interrupts enabled
 		__no_operation(); // For debugger
 	}
@@ -114,7 +137,7 @@ void ADC12Init(void)
 	ADC12CTL0 = ADC12SHT0_2 + ADC12ON;      // Set sample time
 	ADC12CTL1 = ADC12SHP;                   // Enable sample timer
 	ADC12CTL2 |= ADC12RES_2;                // 12-bit conversion results
-	ADC12MCTL0 = ADC12INCH_2 | ADC12VRSEL_0;// Vref = , Input
+	ADC12MCTL0 = ADC12INCH_5 | ADC12VRSEL_1;// Vref+ = , Input
 	ADC12IER0 |= ADC12IE0;                  // Enable ADC conv complete interrupt
 	P1OUT = BIT0;
 
@@ -123,8 +146,8 @@ void GPIOInit()
 {
 	P1OUT &= ~BIT0;                         // Clear LED to start
 	P1DIR |= BIT0;                          // P1.0 output
-	P5SEL1 |= ADC12;                         // Configure P1.4 for ADC
-	P5SEL0 |= ADC12;
+	P1SEL1 |= ADC12;                         // Configure P1.5 for ADC
+	P1SEL0 |= ADC12;
 
 }
 void TimerAInit(void) {
@@ -138,7 +161,6 @@ void TimerAInit(void) {
 __interrupt void TIMER0_A0_ISR(void)
 {
 	ADC12CTL0 |= ADC12SC | ADC12ENC;
-	__delay_cycles(30000);
 }
 //ADC ISR
 #pragma vector=ADC12_B_VECTOR
@@ -148,8 +170,7 @@ __interrupt void ADC12ISR(void)
 	voltage = in * 0.00029;        //converts ADC to voltage
 	tempC = voltage / 0.01;           //converts voltage to Temp C
 	tempF = ((9 * tempC) / 5) + 32;             //Temp C to Temp F
-	__delay_cycles(30000);
 	while (!(UCA0IFG&UCTXIFG));
-	__delay_cycles(30000);
 	UCA0TXBUF = tempF;
+	//UCA0TXBUF = in;
 }
