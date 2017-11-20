@@ -1,37 +1,37 @@
 //******************************************************************************
-//
-//                 MSP430FR5994
-//              -------------------
-//         /|\  |          VCC|- 3.3V
-//          |   |             |
-//          --  |GND      P1.5|--< adc temp
-//              |         P1.4|--> TX
-//              |			  |
-//              |             |
+//														+
+//                 MSP430FR5994							|_____
+//              ---------------								 |
+//         /|\  |          VCC|- 3.3V						FAN
+//          |   |             |							____ |
+//          --  |GND      P1.5|--< adc temp		NMOS	|
+//              |         P1.4|--> PWM	---------------[|
+//              |			  |				|--->>>>----|
+//              |             |					R1		ö GND
 //				|		  P1.0|--> LED
 //              -------------------
-//  adc_value (P1.7) to LM35
+//  adc_value (P1.5) to LM35
+//	PWM		  (P1.4) to FAN / NMOS
 //
-//  Filename : msp430g2553-ADC10.c
+//  Filename : open_5994.c
 //
-//  Created on : October 22, 2017
-//  Updated on : November 15, 2017
+//  Created on : November 15, 2017
+//  Updated on : November 19, 2017
 //  Author : Joshua Gould
 //
 //******************************************************************************
-
-
-//Joshua Gould
 //
-//Reference Jessica Wozniak & Russell Trafford
+//Reference/Mad Help from Jessica Wozniak & Russell Trafford
 //
+//******************************************************************************
+
 #include <msp430.h>
 
 #define ADC12 BIT5
 #define LED1 BIT0
 #define RXD BIT4
 #define TXD BIT3
-#define OUTPUT BIT4 //Pin 1.1 is the TB0CCR1 output pin.
+#define OUTPUT BIT4		//Pin 1.4 is the TB0CCR1 output pin.
 
 void TimerAInit(void);
 void TimerBInit(void);
@@ -44,6 +44,21 @@ unsigned volatile int in = 0;
 volatile float tempC = 0;
 volatile float tempF = 0;
 volatile float voltage = 0;
+
+void GPIOInit()
+{
+	P1OUT &= ~BIT0;                         // Clear LED to start
+	P1DIR |= BIT0;                          // P1.0 output
+	P1SEL1 |= ADC12;                         // Configure P1.5 for ADC
+	P1SEL0 |= ADC12;
+}
+void PinInit(void)
+{
+	//For pin 1.4, P1DIR = 1, P1SEL0 = 1, P1SEL1 = 0.
+	P1DIR |= OUTPUT; //Pin 1.4
+	P1SEL1 &= ~OUTPUT;
+	P1SEL0 |= OUTPUT;
+}
 
 int main(void)
 {
@@ -95,13 +110,7 @@ __interrupt void USCI_A0_ISR(void)
 	}
 }
 
-void PinInit(void)
-{
-	//For pin 1.4, P1DIR = 1, P1SEL0 = 1, P1SEL1 = 0.
-	P1DIR |= OUTPUT; //Pin 1.4
-	P1SEL1 &= ~OUTPUT;
-	P1SEL0 |= OUTPUT;
-}
+
 
 void TimerBInit(void)
 {
@@ -142,14 +151,7 @@ void ADC12Init(void)
 	P1OUT = BIT0;
 
 }
-void GPIOInit()
-{
-	P1OUT &= ~BIT0;                         // Clear LED to start
-	P1DIR |= BIT0;                          // P1.0 output
-	P1SEL1 |= ADC12;                         // Configure P1.5 for ADC
-	P1SEL0 |= ADC12;
 
-}
 void TimerAInit(void) {
 	TA0CCTL0 = CCIE;
 	TA0CCTL1 = OUTMOD_3;
