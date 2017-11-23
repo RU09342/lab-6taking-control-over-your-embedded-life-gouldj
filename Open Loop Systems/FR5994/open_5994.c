@@ -6,7 +6,7 @@
 //          |   |             |							____ |
 //          --  |GND      P1.5|--< adc temp		NMOS	|
 //              |         P1.4|--> PWM	---------------[|
-//              |			  |				|--->>>>----|
+//              |			  |				|___>>>>____|
 //              |             |					R1		ö GND
 //				|		  P1.0|--> LED
 //              -------------------
@@ -40,7 +40,7 @@ void UARTInit(void);
 void GPIOInit(void);
 void PinInit(void);
 
-unsigned volatile int in = 0;
+unsigned volatile int adc_in = 0;
 volatile float tempC = 0;
 volatile float tempF = 0;
 volatile float voltage = 0;
@@ -98,6 +98,7 @@ __interrupt void USCI_A0_ISR(void)
 		while (!(UCA0IFG&UCTXIFG));
 
 		TB0CCR1 = 255 - UCA0RXBUF;      //duty cycle for FAN
+
 		__no_operation();
 		break;
 
@@ -168,11 +169,10 @@ __interrupt void TIMER0_A0_ISR(void)
 #pragma vector=ADC12_B_VECTOR
 __interrupt void ADC12ISR(void)
 {
-	in = ADC12MEM0;
+	adc_in = ADC12MEM0;
 	voltage = in * 0.00029;        //converts ADC to voltage
 	tempC = voltage / 0.01;           //converts voltage to Temp C
 	tempF = ((9 * tempC) / 5) + 32;             //Temp C to Temp F
 	while (!(UCA0IFG&UCTXIFG));
 	UCA0TXBUF = tempF;
-	//UCA0TXBUF = in;
 }

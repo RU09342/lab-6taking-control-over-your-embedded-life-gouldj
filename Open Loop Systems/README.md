@@ -19,9 +19,38 @@ You then need to use this information to make a final open loop control system w
 
 
 ## Deliverables
-Your README needs to contain schematics of your system, the plot of the plot of the temperature and input voltages at the 5C steps, and a brief talk about why you chose the processor you did along with the control technique for the fan. As always, you should include a brief description of the code you generated to run the experiment. You need to also include information on how to use your control software, including what inputs it is expecting and what range of values you are expecting. At this time you are not going to need to user-proof the system, but you will for the milestone, so keep it in the back of your head.
+Your README needs to contain schematics of your system, 
+the plot of the plot of the temperature 
+and input voltages at the 5C steps, 
+| Hex 	| PWM (%)       | TempC  |
+| :-------------: |:-------------:| :-----:|
+| 0      | 0	 | >100	|
+| 1A     | 10	 | 51	|
+| 33     | 20	 | 43	|
+| 4D     | 30	 | 40	|
+| 66     | 40	 | 38	|
+| 80     | 50	 | 37.5	|
+| 99     | 60	 | 36.5	|
+| B2     | 70	 | 35.7	|
+| CC     | 80	 | 35.3	|
+| E6     | 90	 | 35.1	|
+| FF     | 90	 | 35	|
+and a brief talk about why you chose the processor you did 
+along with the control technique for the fan. 
+
+As always, you should include a brief description of the code 
+You need to also include information on how to use your control 
+software, including what inputs it is expecting 
+and what range of values you are expecting. 
+
+At this time you are not going to need to user-proof the system, 
+but you will for the milestone, so keep it in the back of your head.
 
 ### What your README and code doesn't need
-For starters, note the fact I ask you to do this with only one board. You also do not need to give me all of your code in the README, just tell me functionally what is going on along with showing off any functions you may have made.
+For starters, note the fact I ask you to do this with 
+only one board. You also 
+do not need to give me all of your code in the README, 
+just tell me functionally what is going on along with 
+showing off any functions you may have made.
 
 Your code *DOES NOT* need to perform any sort of closed loop control. Save that for the milestone. This means that your system does not need to try to actively change the fan speed without your help. You are going to essentially make your microcontroller one big Convert-o-Box to turn a desired temperature into a controllable signal, and then be able to read a temperature.
