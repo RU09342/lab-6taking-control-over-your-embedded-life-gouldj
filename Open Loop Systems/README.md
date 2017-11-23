@@ -22,19 +22,22 @@ You then need to use this information to make a final open loop control system w
 Your README needs to contain schematics of your system, 
 the plot of the plot of the temperature 
 and input voltages at the 5C steps, 
-| Hex 	| PWM (%)       | TempC  |
-| :-------------: |:-------------:| :-----:|
-| 0      | 0	 | >100	|
-| 1A     | 10	 | 51	|
-| 33     | 20	 | 43	|
-| 4D     | 30	 | 40	|
-| 66     | 40	 | 38	|
-| 80     | 50	 | 37.5	|
-| 99     | 60	 | 36.5	|
-| B2     | 70	 | 35.7	|
-| CC     | 80	 | 35.3	|
-| E6     | 90	 | 35.1	|
-| FF     | 90	 | 35	|
+
+
+| Hex 	| PWM (%) | TempC |
+| :---: |:-------:| :----:|
+| 0     | 0	      | >100	|
+| 1A    | 10	    | 51	  |
+| 33    | 20	    | 43	  |
+| 4D    | 30	    | 40	  |
+| 66    | 40	    | 38	  |
+| 80    | 50	    | 37.5	|
+| 99    | 60	    | 36.5	|
+| B2    | 70	    | 35.7	|
+| CC    | 80	    | 35.3	|
+| E6    | 90	    | 35.1	|
+| FF    | 100	    | 35	  |
+
 and a brief talk about why you chose the processor you did 
 along with the control technique for the fan. 
 
