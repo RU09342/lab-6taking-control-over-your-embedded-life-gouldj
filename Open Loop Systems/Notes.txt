@@ -1,3 +1,0 @@
-Minimum Fan Voltage -> 3.95
-Minimum Hex Value --> 0x0e
-
