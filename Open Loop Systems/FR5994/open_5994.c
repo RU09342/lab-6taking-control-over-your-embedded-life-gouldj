@@ -43,9 +43,9 @@ volatile float voltage = 0;
 
 void Temp_GPIOInit()
 {
-	P1OUT &= ~BIT0;                         // Clear LED to start
-	P1DIR |= BIT0;                          // P1.0 output
-	P1SEL1 |= BIT5;                         // Configure P1.5 for ADC
+	P1OUT &= ~BIT0;        // Clear LED to start
+	P1DIR |= BIT0;         // P1.0 output
+	P1SEL1 |= BIT5;        // Configure P1.5 for ADC
 	P1SEL0 |= BIT5;
 }
 void Fan_GPIOInit(void)
@@ -60,17 +60,17 @@ int main(void)
 {
 	WDTCTL = WDTPW + WDTHOLD;		// Stop WDT
 	PM5CTL0 &= ~LOCKLPM5;			//Disable HIGH Z mode
-	Fan_GPIOInit();					//Fan Pin Initiaization
-	Temp_GPIOInit();				//Temperture GPIO Initiaization
-	TimerAInit();					//Timer A Function call UART
-	TimerBInit();					//Timer B Function call PWM
-	UARTInit();						//UART Initiaization
+	Fan_GPIOInit();				//Fan Pin Initiaization
+	Temp_GPIOInit();			//Temperture GPIO Initiaization
+	TimerAInit();				//Timer A Function call UART
+	TimerBInit();				//Timer B Function call PWM
+	UARTInit();				//UART Initiaization
 
 
 	while (REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
 	REFCTL0 |= REFVSEL_0 + REFON;           // Enable internal 1.2 reference
 
-	ADC12Init();							//ADC12 Function call
+	ADC12Init();				//ADC12 Function call
 
 	while (!(REFCTL0 & REFGENRDY));          // Wait for reference generator
 	__enable_interrupt(); //Enable interrupts.
@@ -137,18 +137,18 @@ void ADC12Init(void)
 
 void TimerAInit(void)  //Timer used for UART
 {
-	TA0CCTL0 = CCIE;				//Disable timer Interrupt
+	TA0CCTL0 = CCIE;			//Disable timer Interrupt
 	TA0CCTL1 = OUTMOD_3;			//Set/Reset when the timer counts to the TA0CCR1 value, reset for TA0CCR0
 	TA0CCR1 = 256;
-	TA0CCR0 = 4096 - 1;				//Set CCR0 for a ~1kHz clock.
-	TA0CTL = TASSEL_1 + MC_1 + ID_3;
+	TA0CCR0 = 4096 - 1;			//Set CCR0 for a ~1kHz clock.
+	TA0CTL = TASSEL_1 + MC_1 + ID_3;	//Enable Timer A with SMCLK
 }
 void TimerBInit(void) //PWM Timer
 {
 	TB0CCTL1 = OUTMOD_3;			//Set OUTMOD_3 (set/reset) for CCR1
-									//Set initial values for CCR1 (255 -> 254)
-	TB0CCR1 = 0xFF;					//reset and set immediately (May change to slower clock)
-	TB0CCR0 = 255 - 1;				//Set CCR0 for a ~1kHz clock.
+						//Set initial values for CCR1 (255 -> 254)
+	TB0CCR1 = 0xFF;				//reset and set immediately (May change to slower clock)
+	TB0CCR0 = 255 - 1;			//Set CCR0 for a ~1kHz clock.
 	TB0CTL = TBSSEL_2 + MC_1;		//Enable Timer B0 with SMCLK and up mode. 1MHz
 }
 #pragma vector=TIMER0_A0_VECTOR
@@ -160,10 +160,10 @@ __interrupt void TIMER0_A0_ISR(void)
 #pragma vector=ADC12_B_VECTOR
 __interrupt void ADC12ISR(void)
 {
-	adc_in = ADC12MEM0;					//set ADC12MEM to variable
-	voltage = adc_in * 0.00029;			//converts ADC to voltage
-	tempC = voltage / 0.01;				//converts voltage to Temp C
+	adc_in = ADC12MEM0;		    //set ADC12MEM to variable
+	voltage = adc_in * 0.00029;	    //converts ADC to voltage
+	tempC = voltage / 0.01;		     //converts voltage to Temp C
 	tempF = ((9 * tempC) / 5) + 32;     //Temp C to Temp F
 	while (!(UCA0IFG&UCTXIFG));
-	UCA0TXBUF = tempC;					//change to =tempF to ouput in fahrenheit 
+	UCA0TXBUF = tempC;		     //change to =tempF to ouput in fahrenheit 
 }
