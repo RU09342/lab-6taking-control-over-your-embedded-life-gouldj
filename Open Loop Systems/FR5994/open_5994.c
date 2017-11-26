@@ -27,6 +27,8 @@
 
 #include <msp430.h>
 
+//Function Setup//
+
 #define ADC12 BIT5
 #define LED1 BIT0
 #define RXD BIT4
@@ -49,8 +51,8 @@ void GPIOInit()
 {
 	P1OUT &= ~BIT0;                         // Clear LED to start
 	P1DIR |= BIT0;                          // P1.0 output
-	P1SEL1 |= ADC12;                         // Configure P1.5 for ADC
-	P1SEL0 |= ADC12;
+	P1SEL1 |= BIT5;                         // Configure P1.5 for ADC
+	P1SEL0 |= BIT5;
 }
 void PinInit(void)
 {
