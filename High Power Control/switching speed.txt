@@ -1,0 +1,3 @@
+Maximum switching speed of the relay was 370 Hz.
+
+Maximum switching speed of the MOSFET was 25kHz

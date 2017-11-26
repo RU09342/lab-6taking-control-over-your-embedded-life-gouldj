@@ -1,5 +1,5 @@
 # Lab 6: "High Power" Control
-#### Joshua Gould
+#### Jack Pedicone and Joshua Gould
 ##### Created - 11-25-2017
 ##### Updated - 11-25-2017
 
@@ -17,7 +17,7 @@
 * [ ] Protect MSP430G2553 from "High Voltage" (12V)
 * [ ] Control the state of the relay to drive a power resistor
 * [ ] Screenshoot of the output of the MSP430G2553 and voltage across power resistor
-* [ ] Find switching speeds of relay experimentally
+* [ ] Find switching speeds of relay and MOSFET switch experimentally
 
 ## Compatibility
 * MSP430G2553
@@ -27,7 +27,7 @@ Create a safe circuit enviroment to operate a MSP430 with PWM
 
 ### Circuit
 
-[Picture of Circuit HERE]
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/Circuit_MSP430.jpg" width="600"/>
 
 ## Voltage Across Power Resistor
 

@@ -11,9 +11,9 @@ Since you already have the code to perform PWM, then really, the software side o
 
 One thing to note about the MSP430F5529 is the fact that it includes each pin for bit 3 from 0 to 7. Because of that, it becomes simple to traverse across each of these pins by simply incrementing. In order to create a functional DAC that could be read on an oscilloscope, the circuit below had to be built.
 
-![Alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/setup.jpg "Circuit built for the R2R DAC.")
+![alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/setup.jpg "Circuit built for the R2R DAC.")
 
-![Alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/R@R_schematic.png "The circuit in schematic form.")
+![alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/R@R_schematic.png "The circuit in schematic form.")
 
 The outputs of each pin from 3.0 to 3.7 correspond to the 8 bit binary number that needs to count from 0 (0x00) to 255 (0xFF), and then back down to zero. The output voltage of the F5529 would only leave one of the 2k resistors when its respective pin is turned on. 
 
@@ -34,12 +34,12 @@ while(1){
 
 The result of this is an output voltage that starts at 0V and rises in steps after each delay until it reaches 0xFF, about 1.8V, and then begins stepping back down to 0. The resulting waveform is a triangle wave.
 
-![Alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/Scopes/R2R_100Load.png "Scope reading of the R2R with a 100 Ohm Load.")
+![alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/Scopes/R2R_100Load.png "Scope reading of the R2R with a 100 Ohm Load.")
 
 ## Loading Effects
 Obviously you are going to be making this type of circuitry to drive something. This introduces the idea of loading effect, wherein your circuit will perform differently based on what is going to be attached to it. For each of these implementations, try placing a variety of resistors from 100 ohms up to see what happens to your output signal and comment on what is happening.
 
-![Alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/Scopes/R2R_510Load.png "Scope reading of the R2R with a 510 Ohm Load")
+![alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/Scopes/R2R_510Load.png "Scope reading of the R2R with a 510 Ohm Load")
 
 ![Alt text](lab-6taking-control-over-your-embedded-life-gouldj/Precision Control/Pictures/Scopes/R2R_2kLoad.png "Scope reading of the R2R with a 2k Ohm Load")
 
