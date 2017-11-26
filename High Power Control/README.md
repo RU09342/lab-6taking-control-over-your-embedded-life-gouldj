@@ -1,12 +1,12 @@
 # Lab 6: "High Power" Control
-#### Jack Pedicone and Joshua Gould
+####  Joshua Gould and Jack Pedicone
 ##### Created - 11-25-2017
 ##### Updated - 11-25-2017
 
 ## Dependencies
 * Relay
 * MSP430G2553
-* MOSFET
+* MOSFET (nMOS)
 * LEDs (optional)
 
 ## Set Requirements
@@ -16,21 +16,39 @@
 * [ ] Find differences in inductive and resistive loads
 * [ ] Protect MSP430G2553 from "High Voltage" (12V)
 * [ ] Control the state of the relay to drive a power resistor
-* [ ] Screenshoot of the output of the MSP430G2553 and voltage across power resistor
+* [ ] Output voltage of the MSP430G2553 and voltage across power resistor for both switches
 * [ ] Find switching speeds of relay and MOSFET switch experimentally
 
 ## Compatibility
 * MSP430G2553
 
 ## Functionality Description
-Create a safe circuit enviroment to operate a MSP430 with PWM
+Create a safe, high power circuit enviroment to operate a MSP430 with a switch
 
-### Circuit
+### Relay Switch Circuit
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/Circuit_MSP430.jpg" width="600"/>
 
-## Voltage Across Power Resistor
+### Relay Switch Schematic
 
-[Picture / Numbers here]
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/relay_circuit_schematic.PNG"
+
+### Voltage Across Power Resistor
+
+# Relay Switch
+
+Voltage: 7.95V
+Current Draw: 79.5 mΩ. 
+
+# MOSFET Switch
+
+Voltage: 7.21V
+Current draw: 72.1 mΩ
+
+### Switching Speeds
+
+
+
+
 
 
