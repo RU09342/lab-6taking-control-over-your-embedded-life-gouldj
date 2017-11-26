@@ -7,7 +7,7 @@
 //          --  |GND      P1.5|--< adc temp	NMOS	|
 //              |         P1.4|--> PWM	---------------[|
 //              |	      |		    |___>>>>____|
-//              |             |			R1      ö GND
+//              |             |			R1      Ã¶ GND
 //		|	  P1.0|--> LED
 //              ---------------
 //  adc_value (P1.5) to LM35
@@ -36,12 +36,12 @@ void Fan_GPIOInit(void);
 void Temp_GPIOInit(void);
 
 //Variable declaration//
-unsigned volatile int	adc_in = 0;
+unsigned volatile int		adc_in = 0;
 volatile float			tempC = 0;
 volatile float			tempC_set = 0;
 volatile float			tempF = 0;
 volatile float			voltage = 0; 
-int						PWM = 0;
+int				PWM = 0;
 
 void Temp_GPIOInit()
 {
