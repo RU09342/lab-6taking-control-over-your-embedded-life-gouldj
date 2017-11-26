@@ -73,7 +73,7 @@ Modelling the system of this circuit required a relationship between temperature
 #### Temperature input 36 o 34
 ![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/36%20to%2034.PNG)
 #### Temperature input 39 to 36
-![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/39%20to%2036.PNG
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/39%20to%2036.PNG)
 #### Temperature input 43 to 39
 ![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/43%20to%2039.PNG)
 #### Temperature input 54 to 43
@@ -105,8 +105,27 @@ void Fan_GPIOInit(void)
 ```
 
 ### Timers
-
+Timers used in this code was separated for the UART and PWM Fan. Readings set by UART must be made at about once per second. PWM readings are manipulated with the UART interrupt however the PWM timer is required for initalization and mode.
+```C
+void TimerAInit(void)  //Timer used for UART
+{
+	TA0CCTL0 = CCIE;			//Disable timer Interrupt
+	TA0CCTL1 = OUTMOD_3;			//Set/Reset when the timer counts to the TA0CCR1 value, reset for TA0CCR0
+	TA0CCR1 = 256;
+	TA0CCR0 = 4096 - 1;			//Set CCR0 for a ~1kHz clock.
+	TA0CTL = TASSEL_1 + MC_1 + ID_3;	//Enable Timer A with SMCLK
+}
+void TimerBInit(void) //PWM Timer
+{
+	TB0CCTL1 = OUTMOD_3;			//Set OUTMOD_3 (set/reset) for CCR1
+									//Set initial values for CCR1 (255 -> 254)
+	TB0CCR1 = 0xFF;				//reset and set immediately (May change to slower clock)
+	TB0CCR0 = 255 - 1;			//Set CCR0 for a ~1kHz clock.
+	TB0CTL = TBSSEL_2 + MC_1;		//Enable Timer B0 with SMCLK and up mode. 1MHz
+}
+```
 ### UART Interrupt
+The most important part of this lab is the UART interrupt. Here the reieved value over UART is transmitted to PWM values. Where the input changes from 32 to 54 over UART the teperature changes from 32 to 54. In order to control this, the fan will then change speed depending on the input.
 ```C
 #pragma vector=EUSCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
@@ -117,9 +136,38 @@ __interrupt void USCI_A0_ISR(void)
 	case USCI_UART_UCRXIFG:
 		while (!(UCA0IFG&UCTXIFG));
 
-		TB0CCR1 = 255 - UCA0RXBUF;      //duty cycle for FAN
+		tempC_set = UCA0RXBUF;             // send RX to tempC_set
 
-		__no_operation();
+		if (tempC_set <= 32)
+		{
+			PWM = 0xFF;
+		}
+		else if (tempC_set > 32 && tempC_set <= 34)
+		{
+			PWM = ((tempC_set - 36.87) / -0.0917)
+		}
+		else if (tempC_set > 34 && tempC_set <= 36)
+		{
+			PWM = ((tempC_set - 48.24) / -0.08)
+		else if (tempC_set > 36 && tempC_set <= 39)
+			{
+				PWM = ((tempC_set - 42.03) / -0.0394)
+			}
+		else if (tempC_set > 39 && tempC_set <= 43)
+		{
+			PWM = ((tempC_set - 50.85) / -0.1538)
+		}
+		else if (tempC_set > 43 && tempC_set <= 54)
+		{
+			PWM = ((tempC_set - 57.90) / -0.2759)
+		}
+		else if (tempC_set > 54)
+		{
+			PWM = 25;
+		}
+
+		TB0CCR1 = PWM;
+
 		break;
 
 	case USCI_UART_UCTXIFG: break;
@@ -132,6 +180,7 @@ __interrupt void USCI_A0_ISR(void)
 }
 ```
 ### ADC Interrupt
+The ADC interrupt handles the ADC voltage reading from the LM35 and translates the value to a readable hex over UART.
 ```C
 #pragma vector=ADC12_B_VECTOR
 __interrupt void ADC12ISR(void)
