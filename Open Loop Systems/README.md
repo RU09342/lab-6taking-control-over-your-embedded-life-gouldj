@@ -27,13 +27,13 @@ msp430.h - default library
 #### Tasks
 * [x] Create circuit for heating/cooling
 * [x] Read tempeture of system over UART using ADC
-* [ ] System temperature plot (5C steps)
-* [ ] Reason for processor choice
-* [ ] Control technique for fan
-* [ ] Code description
-* [ ] Model max tempeture
-* [ ] Plot System
-* [ ] User can control tempeture
+* [x] System temperature plot (5C steps)
+* [x] Reason for processor choice
+* [x] Control technique for fan
+* [x] Code description
+* [x] Model max tempeture
+* [x] Plot System
+* [x] User can control tempeture
 
 ## Circuit 
 This system contains a few parts for it to work. Firstly, the MSP430FR5994 needs the code provided below to handle PWM with temperature readings over UART. When heating up the LM35, this circuit requires 15-20V running to a 5V regulator. In our regulator circuit we attached a 33 Ohm power resistor to increase heating speeds. As for the PWM, the negative lead of the fan connected to the PWM pin of the MSP430 through the gate of a MOSFET. 12 Volts ran across the MOSFET to current limit the pin. In this configuration we were able to completely turn off the fan and run the fan at 100% PWM over UART.
