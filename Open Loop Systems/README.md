@@ -1,7 +1,7 @@
 # Lab 6: Open Loop Systems
 #### Joshua Gould
 ##### Created - 11-25-2017
-##### Updated - 11-25-2017
+##### Updated - 11-26-2017
 
 ## Library Used
 msp430.h - default library
@@ -16,6 +16,8 @@ msp430.h - default library
 
 ## Set Requirements
 "Focus on system modeling getting a system to a desirable state. For this lab, you will be attempting to keep a voltage regulator within a specific temperature range using a DC fan which you will have control over. For this part to be a success, you need to figure out what is the minimum fan speed you need to cool off the regulator so that is stays operational. You will need to take a 5V regulator from the back of the lab and drop the output across a 100 ohm power resistor (1 watt should do the trick). The input to the voltage regulator will be between 15-20V. It would be really useful to see what the temperature of your system is so you can determine the performance of your system. This can be done either by displaying the current temperature over a display, passing the information over UART, or other ways as well. Remember that UART is Asynchronous, meaning that you can send information whenever you would like from your controller back to a PC, it doesn't have to be reactionary."
+
+### README
 "Your README needs to contain schematics of your system, the plot of the plot of the temperature and input voltages at the 5C steps, and a brief talk about why you chose the processor you did along with the control technique for the fan. As always, you should include a brief description of the code. You need to also include information on how to use your control software, including what inputs it is expecting and what range of values you are expecting."
 
 ### System Modelling
@@ -140,9 +142,9 @@ __interrupt void USCI_A0_ISR(void)
 
 		if (tempC_set <= 32)
 		{
-			PWM = 0xFF;
+			PWM = 0xFF;		//set PWM to 100%
 		}
-		else if (tempC_set > 32 && tempC_set <= 34)
+		else if (tempC_set > 32 && tempC_set <= 34)	//change PWM range
 		{
 			PWM = ((tempC_set - 36.87) / -0.0917)
 		}
@@ -161,7 +163,7 @@ __interrupt void USCI_A0_ISR(void)
 		{
 			PWM = ((tempC_set - 57.90) / -0.2759)
 		}
-		else if (tempC_set > 54)
+		else if (tempC_set > 54)		//Basically this is the smallest PWM the fan can handle and the temp it sets to at 10%
 		{
 			PWM = 25;
 		}
