@@ -63,9 +63,67 @@ msp430.h - default library
 
 ## System Plot
 
-![Alt Text}(https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/TempvsPWMchart.PNG)
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/TempvsPWMchart.PNG)
 
 ## Code Functionality
 ### MSP430FR5994
 The MSP430FR5994 was chosen for its 12-Bit Analog-to-Digital Converter (ADC), Six 16-Bit Timers With up to Seven Capture/Compare Registers Each, and its ability to hold up to 20 External Input Channels. The integrated capacitor for offline power is not necessary in this lab, however it is useful for when your laptop dies and you miss some temperature measurements. Additionally, this MSP430 was experimented with in  the pevious milestone.
-### 
+### GPIO Setup
+Unlike other labs, two pins had to be enabled to handle ADC (P1.4 and P1.5) where each pin GPIO has been defined for each output and input.
+```C
+void Temp_GPIOInit()
+{
+	P1OUT &= ~BIT0;        // Clear LED to start
+	P1DIR |= BIT0;         // P1.0 output
+	P1SEL1 |= BIT5;        // Configure P1.5 for ADC
+	P1SEL0 |= BIT5;
+}
+void Fan_GPIOInit(void)
+{
+	//For pin 1.4
+	P1DIR |= BIT4;		//Pin 1.4
+	P1SEL1 &= ~BIT4;	//control which functions will be connected or multiplexed onto the pins.  
+	P1SEL0 |= BIT4;		//The higher four bits have as their function to enable JTAG or to disable it.
+}
+```
+
+### Timers
+
+### UART Interrupt
+```C
+#pragma vector=EUSCI_A0_VECTOR
+__interrupt void USCI_A0_ISR(void)
+{
+	switch (__even_in_range(UCA0IV, USCI_UART_UCTXCPTIFG))
+	{
+	case USCI_NONE: break;
+	case USCI_UART_UCRXIFG:
+		while (!(UCA0IFG&UCTXIFG));
+
+		TB0CCR1 = 255 - UCA0RXBUF;      //duty cycle for FAN
+
+		__no_operation();
+		break;
+
+	case USCI_UART_UCTXIFG: break;
+	case USCI_UART_UCSTTIFG: break;
+	case USCI_UART_UCTXCPTIFG: break;
+
+	default:
+		break;
+	}
+}
+```
+### ADC Interrupt
+```C
+#pragma vector=ADC12_B_VECTOR
+__interrupt void ADC12ISR(void)
+{
+	adc_in = ADC12MEM0;		    //set ADC12MEM to variable
+	voltage = adc_in * 0.00029;	    //converts ADC to voltage
+	tempC = voltage / 0.01;		     //converts voltage to Temp C
+	tempF = ((9 * tempC) / 5) + 32;     //Temp C to Temp F
+	while (!(UCA0IFG&UCTXIFG));
+	UCA0TXBUF = tempC;		     //change to =tempF to ouput in fahrenheit 
+}
+```
