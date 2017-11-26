@@ -36,10 +36,12 @@ void Fan_GPIOInit(void);
 void Temp_GPIOInit(void);
 
 //Variable declaration//
-unsigned volatile int adc_in = 0;
-volatile float tempC = 0;
-volatile float tempF = 0;
-volatile float voltage = 0;
+unsigned volatile int	adc_in = 0;
+volatile float			tempC = 0;
+volatile float			tempC_set = 0;
+volatile float			tempF = 0;
+volatile float			voltage = 0; 
+int						PWM = 0;
 
 void Temp_GPIOInit()
 {
@@ -92,9 +94,38 @@ __interrupt void USCI_A0_ISR(void)
 	case USCI_UART_UCRXIFG:
 		while (!(UCA0IFG&UCTXIFG));
 
-		TB0CCR1 = 255 - UCA0RXBUF;      //duty cycle for FAN
+		tempC_set = UCA0RXBUF;             // send RX to tempC_set
 
-		__no_operation();
+		if (tempC_set <= 32)
+		{
+			PWM = 0xFF;
+		}
+		else if (tempC_set > 32 && tempC_set <= 34)
+		{
+			PWM = ((tempC_set - 36.87) / -0.0917)
+		}
+		else if (tempC_set > 34 && tempC_set <= 36)
+		{
+			PWM = ((tempC_set - 48.24) / -0.08)
+		else if (tempC_set > 36 && tempC_set <= 39)
+			{
+				PWM = ((tempC_set - 42.03) / -0.0394)
+			}
+		else if (tempC_set > 39 && tempC_set <= 43)
+		{
+			PWM = ((tempC_set - 50.85) / -0.1538)
+		}
+		else if (tempC_set > 43 && tempC_set <= 54)
+		{
+			PWM = ((tempC_set - 57.90) / -0.2759)
+		}
+		else if (tempC_set > 54)
+		{
+			PWM = 25;
+		}
+
+		TB0CCR1 = PWM;
+
 		break;
 
 	case USCI_UART_UCTXIFG: break;
