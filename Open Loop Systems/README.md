@@ -36,6 +36,8 @@ msp430.h - default library
 * [ ] User can control tempeture
 
 ## Circuit 
+This system contains a few parts for it to work. Firstly, the MSP430FR5994 needs the code provided below to handle PWM with temperature readings over UART. When heating up the LM35, this circuit requires 15-20V running to a 5V regulator. In our regulator circuit we attached a 33 Ohm power resistor to increase heating speeds. As for the PWM, the negative lead of the fan connected to the PWM pin of the MSP430 through the gate of a MOSFET. 12 Volts ran across the MOSFET to current limit the pin. In this configuration we were able to completely turn off the fan and run the fan at 100% PWM over UART.
+
 #### Picture
 ![alt text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/Circuit%20Pictures/Circuit_top.jpg)
 #### Tempeture Sense System
@@ -47,25 +49,40 @@ msp430.h - default library
 
 ## System Table
 
-| Hex 	| PWM (%) | TempC |
+| Duty Cycle	| PWM (%) | TempC |
 | :---: |:-------:| :----:|
 | 0     | 0	      | >100	|
-| 1A    | 10	    | 51	  |
-| 33    | 20	    | 43	  |
-| 4D    | 30	    | 40	  |
-| 66    | 40	    | 38	  |
-| 80    | 50	    | 37.5	|
-| 99    | 60	    | 36.5	|
-| B2    | 70	    | 35.7	|
-| CC    | 80	    | 35.3	|
-| E6    | 90	    | 35.1	|
-| FF    | 100	    | 35	  |
+| 25    | 10	    | 54	  |
+| 52    | 20	    | 43	  |
+| 77    | 30	    | 39	  |
+| 102    | 40	    | 38	  |
+| 128   | 50	    | 37	|
+| 153   | 60	    | 36	|
+| 178   | 70	    | 34	|
+| 204   | 80	    | 33	|
+| 230   | 90	    | 32	|
+| 255   | 100	    | 32	  |
 
-## System Plot
+## System Model
+Modelling the system of this circuit required a relationship between temperature and PWM. PWM was incremented by 10% as the temperature was read over UART and compared to the LM35 voltage reading from a multimeter. Steady state was takem at each duty cycle
 
+#### PWM (10% decrease) vs Temperature (C)
 ![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/TempvsPWMchart.PNG)
+#### Temperature input 34 to 32
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/34%20to%2032.PNG)
+#### Temperature input 36 o 34
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/36%20to%2034.PNG)
+#### Temperature input 39 to 36
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/39%20to%2036.PNG
+#### Temperature input 43 to 39
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/43%20to%2039.PNG)
+#### Temperature input 54 to 43
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/54%20to%2043.PNG)
+#### Temperature input over 54
+![Alt Text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/PWM-TEMP-Pics/Over54.PNG)
 
 ## Code Functionality
+This open loop will recieve the temperature over UART and convert it to a duty cycle for the PWM of the fan. 
 ### MSP430FR5994
 The MSP430FR5994 was chosen for its 12-Bit Analog-to-Digital Converter (ADC), Six 16-Bit Timers With up to Seven Capture/Compare Registers Each, and its ability to hold up to 20 External Input Channels. The integrated capacitor for offline power is not necessary in this lab, however it is useful for when your laptop dies and you miss some temperature measurements. Additionally, this MSP430 was experimented with in  the pevious milestone.
 ### GPIO Setup
