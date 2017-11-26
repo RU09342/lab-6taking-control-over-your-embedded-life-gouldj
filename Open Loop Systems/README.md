@@ -36,8 +36,16 @@ msp430.h - default library
 * [ ] User can control tempeture
 
 ## Circuit 
+#### Picture
+![alt text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/Circuit%20Pictures/Circuit_top.jpg)
+#### Tempeture Sense System
+![alt text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/Circuit%20Pictures/temp-system.jpg)
+#### Fan PWM System
+![alt text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/Circuit%20Pictures/pwm-system.jpg)
+#### Schematic
+![alt text](https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/OpenLoopCircuit.PNG)
 
-## System Plot
+## System Table
 
 | Hex 	| PWM (%) | TempC |
 | :---: |:-------:| :----:|
@@ -53,6 +61,11 @@ msp430.h - default library
 | E6    | 90	    | 35.1	|
 | FF    | 100	    | 35	  |
 
+## System Plot
+
+![Alt Text}(https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Open%20Loop%20Systems/Open%20Loop%20Ciruit/TempvsPWMchart.PNG)
+
 ## Code Functionality
-
-
+### MSP430FR5994
+The MSP430FR5994 was chosen for its 12-Bit Analog-to-Digital Converter (ADC), Six 16-Bit Timers With up to Seven Capture/Compare Registers Each, and its ability to hold up to 20 External Input Channels. The integrated capacitor for offline power is not necessary in this lab, however it is useful for when your laptop dies and you miss some temperature measurements. Additionally, this MSP430 was experimented with in  the pevious milestone.
+### 
