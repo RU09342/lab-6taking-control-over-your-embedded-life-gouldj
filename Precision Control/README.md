@@ -62,11 +62,15 @@ The code above simply created a waveform from pin 1.2 of the MSP. This wave coul
 
 ## Physical Circuit
 
+## Scope Screenshot
 
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/Scopes/pwm-wave2.png">
 
 ### R2R DAC
 
 One thing to note about the MSP430F5529 is the fact that it includes each pin for bit 3 from 0 to 7. Because of that, it becomes simple to traverse across each of these pins by simply incrementing. In order to create a functional DAC that could be read on an oscilloscope, the circuit below had to be built.
+
+
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/setup.jpg">
 
@@ -89,12 +93,14 @@ while(1){
    }
 ```
 
-The result of this is an output voltage that starts at 0V and rises in steps after each delay until it reaches 0xFF, about 1.8V, and then begins stepping back down to 0. The resulting waveform is a triangle wave.
+The result of this is an output voltage that starts at 0V and rises in steps after each delay until it reaches 0xFF, about 1.8V, and then begins stepping back down to 0. The resulting waveform is a "staircase" wave, or a triangle wave when zoomed out.
 
-## Loading Effects
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/Scopes/R2R_100Load.png">
+
+### Loading Effects
 "Obviously you are going to be making this type of circuitry to drive something. This introduces the idea of loading effect, wherein your circuit will perform differently based on what is going to be attached to it. For each of these implementations, try placing a variety of resistors from 100 ohms up to see what happens to your output signal and comment on what is happening."
 
-The load of the R2R DAC was tested with three different resistances: 100, 510, and 2k.
+The load of both the PWM and the R2R DAC were tested with three different resistances: 100, 510, and 2k. Below are screenshots from the R2R DAC.
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/Scopes/R2R_100Load.png">
 
