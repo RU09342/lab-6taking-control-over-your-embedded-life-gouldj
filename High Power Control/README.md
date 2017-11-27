@@ -1,6 +1,6 @@
 # Lab 6: "High Power" Control
-####  Joshua Gould and Jack Pedicone
-##### Created - 11-25-2017
+####  Jack Pedicone
+##### Created - 11-16-2017
 ##### Updated - 11-25-2017
 
 ## Dependencies
@@ -28,17 +28,18 @@ Create a safe, high power circuit enviroment to operate a MSP430 with a switch
 
 ### Relay Switching
 
-## Relay Switch Circuit
-
-<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/Circuit_MSP430.jpg" width="600"/>
-
-The relay was found to always switch while 12V ran through it, although when it was tested with 7V and it was found to still function. By hooking LEDS up to both the Normally Open and Normally Closed sides of the relay, the switching of the relay became easier to visualize.
-
-## Relay Switch Schematic
+The relay consists of two sections, one contains a switch while the other contains a inductor. The switch flips when a voltage of at least 7V was running through the coil. Doing so allows the signal going through the Common port of the relay to travel throught the output connected to the power resistor.
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/relay_circuit_schematic.PNG">
 
-The type N MOSFET used in this circuit was essentially used for driving the 12V through the relay. The gate of the MOSFET
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/High%20Power%20Control/Images/Relay_circuit.jpg>
+
+The relay was found to always switch while 12V ran through it, although when it was tested with 7V and it was found to still function. 
+
+##Relay Switching Speed
+
+
+The type N MOSFET used in this circuit was essentially used for driving the 12V through the relay. The output of the MSP430G2553 (or the function generator) output would connect to the gate of the nMOS. Doing this would flip the switch of the relay on and off. By hooking LEDS up to both the Normally Open and Normally Closed sides of the relay, the switching of the relay became easier to visualize. 
 
 ## Relay Switch in Action
 
