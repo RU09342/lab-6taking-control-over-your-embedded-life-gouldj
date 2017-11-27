@@ -1,5 +1,5 @@
 # Lab 6: Precision Control
-#### Jack Pedicone and Joshua Gould
+#### Jack Pedicone
 ##### Created - 11-18-2017
 ##### Updated - 11-25-2017
 
@@ -13,12 +13,9 @@
 #### Tasks
 * [ ] Design a PWM with an analog output voltage 
 * [ ] Generate an 8-bit R2R ladder circuit that can produce "255" voltages between 0V and Vcc
-* [ ] Record "staircase" on oscilloscope
+* [ ] Record triangle wave on oscilloscope
 * [ ] Test DAC using a variety of load resistances
 * [ ] Compare the integrity of each signal by analyzing the difference in frequency components
-
-## PWM Part 2
-"Since you already have the code to perform PWM, then really, the software side of this part of the lab is fairly easy. You need to design a system which can take in a PWM duty cycle over something like UART (or you could have your system read in the position of a potentiometer), and produce that signal on a GPIO. The interesting part comes in when I want the output of your system to be an Analog voltage. In this case, a PWM with a 50% duty cycle should produce roughly Vcc/2 volts. This part of the lab should be done with the MSP430F5529 and the physical circuit should be constructed of an active Low-Pass Filter."
 
 ```c
 #include <msp430f5529.h>
@@ -56,21 +53,15 @@ __interrupt void debounce(void)
 
 The code above simply created a waveform from pin 1.2 of the MSP. This wave could become a triangle wave by using a third order low pass filter hooked up to a buffer.
 
-## Schematic
+<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/PWM_circuit.jpg">
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/PWM_schematic.png">
-
-## Physical Circuit
-
-## Scope Screenshot
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/Scopes/pwm-wave2.png">
 
 ### R2R DAC
 
 One thing to note about the MSP430F5529 is the fact that it includes each pin for bit 3 from 0 to 7. Because of that, it becomes simple to traverse across each of these pins by simply incrementing. In order to create a functional DAC that could be read on an oscilloscope, the circuit below had to be built.
-
-
 
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/setup.jpg">
 
@@ -95,8 +86,6 @@ while(1){
 
 The result of this is an output voltage that starts at 0V and rises in steps after each delay until it reaches 0xFF, about 1.8V, and then begins stepping back down to 0. The resulting waveform is a "staircase" wave, or a triangle wave when zoomed out.
 
-<img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/Scopes/R2R_100Load.png">
-
 ### Loading Effects
 "Obviously you are going to be making this type of circuitry to drive something. This introduces the idea of loading effect, wherein your circuit will perform differently based on what is going to be attached to it. For each of these implementations, try placing a variety of resistors from 100 ohms up to see what happens to your output signal and comment on what is happening."
 
@@ -110,6 +99,8 @@ The load of both the PWM and the R2R DAC were tested with three different resist
 
 As expected, the value of the load resistance did not make a huge difference in the output voltage. Summing up the values of the resistances of the circuits would show that a very high resistance would be needed to make a noticable difference. For reference, the output voltage without a load is 3.33 V.
 
+For the triangle waves above, the FFT was analyzed from a range of 1kHz to 50kHz. There were no major peaks or cliffs in the frequency overall.
+
 ### Bill of Materials
 
 Part Number | Part Name | Quantity
@@ -119,7 +110,3 @@ CFR-25JB-52-1K | 1k resistor | 10
 FK24X5R0J156M | 15uF capacitor | 3
 TL072CDT | Op Amp | 1
 
-## Deliverables
-Along with what was asked in each of the parts above, for each implementation, you need to generate at least one triangle wave from your microntroller. This can be done by simply incrementing and decrementing values that are being sent to your circuit. You need to measure the output of each one of these along with taking the FFT on the scope of each one. The span on the FFT will need to go from 1kHz to about 50kHz if possible. You then need to compare the integrity of each signal by analyzing the difference in frequency components.
-
-The README for this part is going to be mainly about the results of your measurement along with information on the implementation. You need to also talk about how you generated the triangle wave, but do not give me a dissertation on it. Since this is going to be talking about hardware, you need to place in the README a Bill Of Materials listing all hardware used as well as link to a Digikey cart which contains the parts needed in the right quantity. You do not need to include things like your F5529 or the breadboard or wires.
