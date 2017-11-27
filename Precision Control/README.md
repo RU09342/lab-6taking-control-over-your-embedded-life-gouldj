@@ -56,7 +56,11 @@ __interrupt void debounce(void)
 
 The code above simply created a waveform from pin 1.2 of the MSP. This wave could become a triangle wave by using a third order low pass filter hooked up to a buffer.
 
+## Schematic
+
 <img src = "https://github.com/RU09342/lab-6taking-control-over-your-embedded-life-gouldj/blob/master/Precision%20Control/Pictures/PWM_schematic.png">
+
+## Physical Circuit
 
 
 

@@ -1,3 +1,12 @@
+/*
+Lab 6 Precision Control - PWM
+Jack Pedicone
+Created 11-18-17
+Updated 11-25-17
+*/
+
+// Software PWM for the MSP430G2553
+
 #include <msp430f5529.h>
 
 void main(void)
@@ -15,10 +24,9 @@ void main(void)
   TA0CCR1 = 0;
   TA0CCTL1 = OUTMOD_7;
 
-  // SMCLK, up mode, divide by 8
+  // SMCLK, up mode
   TA0CTL = TASSEL_2 + MC_1 + TACLR;
   TA0CTL |= (BIT6 + BIT7);
-
 
   // Low power mode
   __bis_SR_register(LPM0_bits + GIE);
